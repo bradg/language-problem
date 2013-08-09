@@ -33,12 +33,22 @@ end
 describe GuessLang, 'merge_vocabs' do
   context 'when there are multiple files for the same language' do
     before do
-      @vocabs = {'lang.1' => %w/a b c    /,
-                 'lang.2' => %w/    c d e/
+      @vocabs = {'english.1' => %w/a b c    /,
+                 'english.2' => %w/    c d e/
                 }
     end
     it 'should combine them into a single vocab' do
-      expect(GuessLang.merge_vocabs(@vocabs)).to eq({'lang' => %w/a b c d e/})
+      expect(GuessLang.merge_vocabs(@vocabs)).to eq({'english' => %w/a b c d e/})
     end
+  end
+end
+
+describe GuessLang, 'compare_vocabs' do
+  it 'should return the number of matching words given 2 vocabs' do
+    vocab1 = %w/a b c d      /
+    vocab2 = %w/    c d e f  /
+    vocab3 = %w/            g/
+    expect(GuessLang.compare_vocabs(vocab1, vocab2)).to eq(2)
+
   end
 end

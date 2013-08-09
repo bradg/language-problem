@@ -28,4 +28,8 @@ class GuessLang
     end
     merged_vocabs
   end
+
+  def self.compare_vocabs(vocab1, vocab2)
+    (vocab1 & vocab2).size
+  end
 end
