@@ -2,6 +2,7 @@
 
 class GuessLang
 
+  # split text into unique words
   def self.extract_vocab(text)
     text.downcase.gsub(/[.,;:]/,'').split(' ').uniq
   end
@@ -18,6 +19,7 @@ class GuessLang
     File.open(filename).read
   end
 
+  # combines multiple files for one language into a single vocab
   def self.merge_vocabs(vocabs)
     merged_vocabs = Hash.new
     vocabs.each do |language_key, vocab|
@@ -31,10 +33,12 @@ class GuessLang
     merged_vocabs
   end
 
+  # returns how many words are in both vocabs
   def self.compare_vocabs(vocab1, vocab2)
     (vocab1 & vocab2).size
   end
 
+  # given a sample vocab, identify the best matching vocab
   def self.find_best_match(sample, vocabs)
     scores = vocabs.map{|lang, vocab| [lang, compare_vocabs(sample, vocab)]}
     # [['lang1', 3], ['lang2', 1], ... ]
@@ -65,7 +69,7 @@ class GuessLang
   end
 end
 
-# if this file is being executed
+# if this file is being executed, call run with the first argument
 if $0 == __FILE__
   if ARGV.size < 1 or ARGV.size > 2
     puts "Usage: #{$0} file-to-check.txt -v\nfile-to-check.txt is the file to analyse\n-v : verbose - print scores of each language"
