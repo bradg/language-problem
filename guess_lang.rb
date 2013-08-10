@@ -32,4 +32,21 @@ class GuessLang
   def self.compare_vocabs(vocab1, vocab2)
     (vocab1 & vocab2).size
   end
+
+  def self.find_best_match(sample, vocabs)
+    scores = vocabs.map{|lang, vocab| [lang, compare_vocabs(sample, vocab)]}
+    # [['lang1', 3], ['lang2', 1], ... ]
+    scores.sort_by!(&:last)
+    # lowest first, highest last
+    scores.last[0]
+  end
+
+  def self.run(file)
+    # Load samples files
+    files = Dir.glob(File.join(__dir__, 'samples'))
+    unknown_vocab = extract_vocab(read_file(file))
+    language = self.find_best_match(unknown_vocab, load_samples(files))
+    puts language
+    language
+  end
 end

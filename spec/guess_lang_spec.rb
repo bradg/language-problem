@@ -49,6 +49,38 @@ describe GuessLang, 'compare_vocabs' do
     vocab2 = %w/    c d e f  /
     vocab3 = %w/            g/
     expect(GuessLang.compare_vocabs(vocab1, vocab2)).to eq(2)
+    expect(GuessLang.compare_vocabs(vocab2, vocab3)).to eq(0)
+  end
+end
 
+describe GuessLang, 'find_best_match' do
+  it 'should return the best matching language' do
+    sample =             %w/a b c d e f g          /
+    vocabs = {
+              'lang2' => %w/    c d e f       j k l/,
+              'best1' => %w/a b c d     g h i      /,
+              'lang3' => %w/a               i j k l/
+             }
+    expect(GuessLang.find_best_match(sample, vocabs)).to eq('best1')
+  end
+end
+
+describe GuessLang, 'run' do
+  context 'with sample files' do
+    before do
+      @content = 'sample content'
+      @unknown = 'unknown'
+      @samples = ['english.1', 'english.2']
+
+      Dir.should_receive(:glob).and_return(@samples)
+      @samples.each do |sample|
+        GuessLang.should_receive(:read_file).with(sample).and_return(@content)
+      end
+      GuessLang.should_receive(:read_file).with(@unknown).and_return(@content)
+      GuessLang.should_receive(:find_best_match).and_return('best')
+    end
+    it 'should output and return the best match' do
+      expect(GuessLang.run(@unknown)).to eq('best')
+    end
   end
 end
