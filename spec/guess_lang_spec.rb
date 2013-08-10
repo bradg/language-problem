@@ -63,20 +63,27 @@ describe GuessLang, 'find_best_match' do
              }
     expect(GuessLang.find_best_match(sample, vocabs)).to eq('best1')
   end
+
+  it 'should return "No match found" if the language cannot be determined at all' do
+    sample =             %w/a b c      /
+    vocabs = {'lang1' => %w/      d e f/}
+    expect(GuessLang.find_best_match(sample, vocabs)).to eq('No match found')
+  end
 end
 
 describe GuessLang, 'run' do
   context 'with sample files' do
     before do
-      @content = 'sample content'
-      @unknown = 'unknown'
+      @unknown_file = 'unknown'
+      @unknown_content = 'unknown content'
       @samples = ['english.1', 'english.2']
+      @sample_content = "this is english content"
 
       Dir.should_receive(:glob).and_return(@samples)
       @samples.each do |sample|
-        GuessLang.should_receive(:read_file).with(sample).and_return(@content)
+        GuessLang.should_receive(:read_file).with(sample).and_return(@sample_content)
       end
-      GuessLang.should_receive(:read_file).with(@unknown).and_return(@content)
+      GuessLang.should_receive(:read_file).with(@unknown).and_return(@unknown_content)
       GuessLang.should_receive(:find_best_match).and_return('best')
     end
     it 'should output and return the best match' do
